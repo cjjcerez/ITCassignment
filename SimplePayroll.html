@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Payroll</title>
+ <style>
+    *{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    }  
+
+    html{
+        text-align: center;
+        height: 100%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: linear-gradient(rgba(0, 0, 0, 0.75),rgba(0,0,0,0.75)),url(background.png);
+        background-size: cover;
+        background-position: center; 
+    }
+        
+    
+    h1{
+        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-weight: bold;
+        color: #fff;
+    }
+    h2{
+        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-weight: none;
+        color: #fff;
+    }
+    p{
+        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-weight: none;
+        color: #000000;
+    }
+    .background1{
+        background-color: #fff;
+        border-radius: 15px;
+        display: inline-block;
+        padding: 10px;
+    }
+    a{
+        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-weight: bold;
+        color:  #511166;
+        -webkit-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        text-decoration: none;
+    }
+    a:hover{
+        color: #0400ff;
+        transform:scale(1,1);
+    }
+    a:visited{
+        text-decoration: none;
+    }
+    
+    button{
+        font-family: 'Roboto', sans-serif;
+        font-weight: bold;
+        background: #000000;
+        padding: 5px;
+        text-decoration: none;
+        text-transform: uppercase;
+        border: none;
+        color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        -webkit-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -webkit-transition-property: box-shadow, transform;
+        transition-property: box-shadow, transform;
+    }
+    button:hover, button:focus, button:active{
+        box-shadow: 0 0 20px rgb(185, 12, 228);
+        -webkit-transform: scale(1,1);
+        transform: scale(1.1);
+        transition: all 0.3s ease-in-out;
+    }
+    button:not(:hover){
+        transform:scale(1);
+        transition: all 0.3s ease-in-out;
+        box-shadow: none;
+    }
+    dialog {
+    position: fixed;
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+    }
+    input[type="number"] {
+        text-align: right;
+    }
+ </style>  
+</head>
+<body>
+      <h1>Simple Payroll</h1>     
+      <br><br>
+
+    <div class="background1">
+      <label for="employeeName">Employee Name:</label>
+      <input id="employeeName" type="text"></input><br><br>
+
+      <label for="daysWorked">Days Worked:</label>
+      <input id="daysWorked" type="number"></input><br><br>
+      
+      <label for="dailyRate">Daily Rate:</label>
+      <input id="dailyRate" type="number"></input><br><br>
+    
+      <label for="deductionAmount">Deduction Amount:</label>
+      <input id="deductionAmount" type="number"></input>
+      <br><br>
+      <button id="btnAddEmployee">Add Employee</button>
+    </div>
+      <br><br>
+
+    
+    <div class="background1">
+      <table id="itemstable" border=1>
+          <thead>
+              <tr>
+                  <td id="employeeNumber">Employee Number</td>
+                  <td id="employeeName">Employee Name</td>
+                  <td id="daysWorked">Days Worked</td>
+                  <td id="dailyRate">Daily Rate</td>
+                  <td id="grossPay">Gross Pay</td>
+                  <td id="deductionAmount">Deduction Amount</td>
+                  <td id="netPay">Net Pay</td>
+              </tr>
+          </thead>
+          <tbody id="tablebody">
+          </tbody>
+          <tfoot>
+              <tr>
+                  <td></td>
+                  <td>Total</td>
+                  <td id="totalDaysWorked"></td>
+                  <td id="totalDailyRate"></td>
+                  <td id="totalGrossPay"></td>
+                  <td id="totalDeductionAmount"></td>
+                  <td id="totalNetPay"></td>
+                  
+              </tr>
+          </tfoot>
+
+      </table>
+      </div>
+      <br><br>  
+        <br>
+        <div class="background1">
+          <button id="btnclearpayroll">Clear Payroll</button>
+          <br>
+          <label for="employeeNumber">Employee No.</label>
+          <input id="inputEmployeeNumber" type="number"></input>
+          <button id="btndelete">Delete</button>
+        </div>
+      <br><br>
+      <div class="background1">
+      <a href="index.html">Back to Home</a>
+      </div>
+    </body>
+
+<!-- Simple pop-up dialog box, containing a form THIS IS NOT DISPLAYED BY DEFAULT -->
+<!--  this is only displayed by dlgConfirmCancel.showModal() -->
+<!-- The value assigned to the button is retrieved by e.target.returnvalue -->
+<dialog id="dlgConfirmCancel">
+    <form method="dialog">
+       <h4 id="dlgmsg"></h4> 
+       <button id="btnConfirm" value="confirm">Confirm</button>
+       <button id="btnCancel" value="cancel">Cancel</button>
+       
+    </form>
+</dialog>
+
+<script type="text/javascript">
+
+    function ConvertDecimal(v,x)
+    {
+     var rvalue;
+       
+       if (isNaN(v)) {
+          rvalue = '';
+         } else {
+           rvalue = v.toFixed(x);
+       }
+     
+     return rvalue;
+     }
+
+    function computeAmount(daysWorked, dailyRate, deductionAmount)
+    {
+        const grossPay = daysWorked * dailyRate;
+        const netPay = grossPay - deductionAmount;
+        return { grossPay, netPay };
+    }
+
+    function initlist(){
+        list=[];
+        document.getElementById("totalamount").innerHTML='';
+    }
+
+    function addEmployeeRow() {
+            const employeeName = document.getElementById("employeeName").value;
+            const daysWorked = document.getElementById("daysWorked").value;
+            const dailyRate = document.getElementById("dailyRate").value;
+            const deductionAmount = document.getElementById("deductionAmount").value;
+
+            const tableBody = document.getElementById("tablebody");
+
+            const newRow = tableBody.insertRow();
+
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+            const cell3 = newRow.insertCell(2);
+            const cell4 = newRow.insertCell(3);
+            const cell5 = newRow.insertCell(4);
+            const cell6 = newRow.insertCell(5);
+            const cell7 = newRow.insertCell(6);
+
+            cell1.textContent = tableBody.rows.length; 
+            cell2.textContent = employeeName; 
+            cell3.textContent = daysWorked;
+            cell4.textContent = dailyRate; 
+            cell5.textContent = (daysWorked * dailyRate).toFixed(2);
+            cell6.textContent = deductionAmount; 
+            cell7.textContent = ((daysWorked * dailyRate) - deductionAmount).toFixed(2);
+
+           
+            document.getElementById("employeeName").value = "";
+            document.getElementById("daysWorked").value = "";
+            document.getElementById("dailyRate").value = "";
+            document.getElementById("deductionAmount").value = "";
+
+            displayTotals();
+        }
+    function displayTotals() {
+
+            const tableBody = document.getElementById("tablebody");
+            const totalDaysWorked = document.getElementById("totalDaysWorked");
+            const totalDailyRate = document.getElementById("totalDailyRate");
+            const totalGrossPay = document.getElementById("totalGrossPay");
+            const totalDeductionAmount = document.getElementById("totalDeductionAmount");
+            const totalNetPay = document.getElementById("totalNetPay");
+
+            let daysWorkedTotal = 0;
+            let dailyRateTotal = 0;
+            let grossPayTotal = 0;
+            let deductionAmountTotal = 0;
+            let netPayTotal = 0;
+
+            for (let i = 0; i < tableBody.rows.length; i++) {
+                daysWorkedTotal += parseFloat(tableBody.rows[i].cells[2].textContent);
+                dailyRateTotal += parseFloat(tableBody.rows[i].cells[3].textContent);
+                grossPayTotal += parseFloat(tableBody.rows[i].cells[4].textContent);
+                deductionAmountTotal += parseFloat(tableBody.rows[i].cells[5].textContent);
+                netPayTotal += parseFloat(tableBody.rows[i].cells[6].textContent);
+            }
+
+            totalDaysWorked.textContent = daysWorkedTotal;
+            totalDailyRate.textContent = dailyRateTotal.toFixed(2);
+            totalGrossPay.textContent = grossPayTotal.toFixed(2);
+            totalDeductionAmount.textContent = deductionAmountTotal.toFixed(2);
+            totalNetPay.textContent = netPayTotal.toFixed(2);
+        }
+       
+        document.getElementById("btnAddEmployee").addEventListener("click", addEmployeeRow);
+
+        function deleteEmployeeByNumber() {
+            const inputEmployeeNumber = document.getElementById("inputEmployeeNumber").value;
+            const tableBody = document.getElementById("tablebody");
+
+            // sort
+            for (let i = 0; i < tableBody.rows.length; i++) {
+                const empNumberCell = tableBody.rows[i].cells[0];
+                if (empNumberCell.textContent === inputEmployeeNumber) {
+                    tableBody.deleteRow(i);
+                    displayTotals();
+                    break; 
+                }
+            }
+        }
+        function clearPayrollList() {
+            const tableBody = document.getElementById("tablebody");
+            while (tableBody.firstChild) {
+                tableBody.removeChild(tableBody.firstChild);
+            }
+            displayTotals();
+        }
+// main
+(() => {
+
+    const dlgConfirmCancel = document.getElementById("dlgConfirmCancel");
+    dlgConfirmCancel.returnValue = "confirm";
+  
+    document.getElementById("btnclearpayroll").addEventListener("click",
+    ()=>{
+         document.getElementById("dlgmsg").innerHTML="Clear the list?"  
+         dlgConfirmCancel.showModal();  
+    });
+
+    document.getElementById("btndelete").addEventListener("click",
+    ()=>{
+         document.getElementById("dlgmsg").innerHTML="Delete employee?"
+         const dlgConfirmCancel = document.getElementById("dlgConfirmCancel");
+         dlgConfirmCancel.showModal();  
+    });   
+    
+    const btnConfirm= document.getElementById("btnConfirm");
+
+    btnConfirm.addEventListener("click", () => {
+        dlgConfirmCancel.returnValue = "confirm";
+                dlgConfirmCancel.close("confirm");
+                const confirmationMsg = document.getElementById("dlgmsg").innerHTML;
+
+                if (confirmationMsg === "Clear the list?") {
+                    clearPayrollList();
+                } else if (confirmationMsg === "Delete employee?") {
+                    deleteEmployeeByNumber();
+                }
+    });
+
+    
+    const btnCancel = document.getElementById("btnCancel");
+    btnCancel.addEventListener("click", () => {
+        dlgConfirmCancel.returnValue="cancel";
+        dlgConfirmCancel.close("cancel");
+    });
+
+    // ---- THIS IS THE FUNCTION THAT DOES CLEARING OF THE CART AND DELETION OF ITEMS
+    // ---- USING A MODAL DIALOG
+    dlgConfirmCancel.addEventListener("close",(e)=>
+    {
+        var rst=e.target.returnValue;
+        var lblmsg = document.getElementById("dlgmsg").innerHTML;
+        if (rst=="confirm") {
+            if (lblmsg=="Clear the cart?" ){ 
+               initcart();
+               showcart();
+            }  else if (lblmsg=="Delete the item?"){
+                var x=document.getElementById("delitem").value*1 - 1;
+                cart.splice(x,1);
+                showcart();
+                document.getElementById("delitem").value='';
+
+            } 
+        }
+        
+    });
+
+})();  // THE MAIN PROGRAM MUST BE TERMINATED BY THIS!!!!
+  
+   var list=[];
+</script>
+</body>
+</html>
