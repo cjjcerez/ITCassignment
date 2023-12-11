@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>income Tax Calculator</title>
+<style>
+    *{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    }
+    
+    html{
+        text-align: center;
+        height: 100%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: linear-gradient(rgba(0, 0, 0, 0.75),rgba(0,0,0,0.75)),url(background.png);
+        background-size: cover;
+        
+    }
+    h1{
+        font-family: 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-weight: bold;
+        color: #fff;
+    }
+    p{
+        font-family: 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-weight: none;
+        color: #fff;
+    }
+    .background1{
+        background-color: #fff;
+        border-radius: 15px;
+        display: inline-block;
+        padding: 10px;
+    }
+    a{
+        font-family: 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-weight: bold;
+        color:  #560b49;
+        -webkit-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        text-decoration: none;
+    }
+    a:hover{
+        color: #1900ff;
+        transform:scale(1,1);
+    }
+    a:visited{
+        text-decoration: none;
+    }
+    
+    button{
+        font-family: 'Roboto', sans-serif;
+        font-weight: bold;
+        background: #000000;
+        padding: 5px;
+        text-decoration: none;
+        text-transform: uppercase;
+        border: none;
+        color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        -webkit-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -webkit-transition-property: box-shadow, transform;
+        transition-property: box-shadow, transform;
+    }
+    button:hover, button:focus, button:active{
+        box-shadow: 0 0 20px rgb(185, 12, 228);
+        -webkit-transform: scale(1,1);
+        transform: scale(1.1);
+        transition: all 0.3s ease-in-out;
+    }
+    button:not(:hover){
+        transform:scale(1);
+        transition: all 0.3s ease-in-out;
+        box-shadow: none;
+    }
+    input[type="number"] {
+        text-align: right;
+    }
+
+    input[type="text"][readonly] {
+        text-align: right;
+    }
+</style>
+</head>
+<body>
+    <h1>Income Tax Calculator</h1>
+    <br><br>
+
+    <div class="background1">
+    <label for="income">Input the taxable income:</label>
+    <input id="income" type="number">
+    <button id="calculateincome">Enter</button>
+    <br><br>
+    <label for="incometax">The income tax is:</label>
+    <input id="incometax" type="text" readonly>
+    <button id="clearvalues">Clear values</button>
+
+    </div>
+    <br><br>
+    <div class="background1">
+    <a href="index.html">Back to Home Page</a>
+    </div>
+</body>
+    <script>
+    document.getElementById("calculateincome").addEventListener("click",
+    function()
+    {
+        var income = document.getElementById("income").value*1;
+        var incometax = 0;
+
+        if (income <= 250000)
+            incometax = 0;
+        else if (250000 < income && income <= 400000)
+            incometax = 0.20 * (income - 250000);
+        else if (400000 < income && income <= 800000)
+            incometax = 30000 + 0.25 * (income - 400000);
+        else if (800000 < income && income <= 2000000)
+            incometax = 130000 + 0.30 * (income - 800000);
+        else if (2000000 < income && income <= 8000000)
+            incometax = 490000 + 0.32 * (income - 2000000);
+        else
+            incometax = 2410000 + 0.35 * (income - 8000000);
+        
+
+    document.getElementById("incometax").value = incometax.toFixed(2) + "PHP";
+    });
+
+    document.getElementById("clearvalues").addEventListener("click",
+    function()
+    {
+        document.getElementById("income").value='';
+        document.getElementById("incometax").value='';
+    });
+    </script>
+</html>
